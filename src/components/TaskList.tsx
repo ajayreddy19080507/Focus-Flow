@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   DndContext, 
   closestCenter,
@@ -26,12 +26,6 @@ interface Task {
   pomodoros: number;
   completed: boolean;
 }
-
-const initialTasks: Task[] = [
-  { id: '1', title: 'Read OS chapter 1', tag: 'OS', pomodoros: 2, completed: false },
-  { id: '2', title: 'DBMS ER diagram assignment', tag: 'DBMS', pomodoros: 1, completed: false },
-  { id: '3', title: 'Practice DSA problems (arrays)', tag: 'DSA', pomodoros: 3, completed: false }
-];
 
 // Sortable Item Component
 const SortableTaskItem: React.FC<{
@@ -87,19 +81,14 @@ const SortableTaskItem: React.FC<{
   );
 };
 
+interface TaskListProps {
+  tasks: Task[];
+  setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
+}
 
-const TaskList: React.FC = () => {
-  const [tasks, setTasks] = useState<Task[]>(() => {
-    const saved = localStorage.getItem('focusflow_tasks');
-    return saved ? JSON.parse(saved) : initialTasks;
-  });
-  
+const TaskList: React.FC<TaskListProps> = ({ tasks, setTasks }) => {
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [newTaskPomo, setNewTaskPomo] = useState('');
-
-  useEffect(() => {
-    localStorage.setItem('focusflow_tasks', JSON.stringify(tasks));
-  }, [tasks]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -129,10 +118,16 @@ const TaskList: React.FC = () => {
     e.preventDefault();
     if (!newTaskTitle.trim()) return;
     
+    const titleLower = newTaskTitle.toLowerCase();
+    let tag = 'General';
+    if (titleLower.includes('os')) tag = 'OS';
+    else if (titleLower.includes('dbms')) tag = 'DBMS';
+    else if (titleLower.includes('dsa')) tag = 'DSA';
+
     const newTask: Task = {
       id: Date.now().toString(),
       title: newTaskTitle,
-      tag: 'General',
+      tag: tag,
       pomodoros: parseInt(newTaskPomo) || 0,
       completed: false
     };

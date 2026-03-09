@@ -2,23 +2,43 @@ import React from 'react';
 import { TrendingUp, Award } from 'lucide-react';
 import './ProgressTracker.css';
 
+interface Task {
+  id: string;
+  title: string;
+  tag: string;
+  pomodoros: number;
+  completed: boolean;
+}
+
 interface ProgressTrackerProps {
   focusTime: number; // in minutes
+  tasks: Task[];
 }
 
 const dailyGoal = 180; // 3 hours
 
-const ProgressTracker: React.FC<ProgressTrackerProps> = ({ focusTime }) => {
+const ProgressTracker: React.FC<ProgressTrackerProps> = ({ focusTime, tasks }) => {
   const goalPercent = Math.min(100, Math.round((focusTime / dailyGoal) * 100));
   
   // Animation states
   const [isLoaded, setIsLoaded] = React.useState(false);
 
   React.useEffect(() => {
-    // Small delay to ensure CSS transition triggers after mount
     const timer = setTimeout(() => setIsLoaded(true), 100);
     return () => clearTimeout(timer);
   }, []);
+
+  // Calculate subject progress
+  const getSubjectProgress = (tag: string) => {
+    const subjectTasks = tasks.filter(t => t.tag === tag);
+    if (subjectTasks.length === 0) return 0;
+    const completed = subjectTasks.filter(t => t.completed).length;
+    return Math.round((completed / subjectTasks.length) * 100);
+  };
+
+  const osProgress = getSubjectProgress('OS');
+  const dbmsProgress = getSubjectProgress('DBMS');
+  const dsaProgress = getSubjectProgress('DSA');
 
   return (
     <div className="card progress-tracker-card">
@@ -50,28 +70,28 @@ const ProgressTracker: React.FC<ProgressTrackerProps> = ({ focusTime }) => {
         <div className="subject-item">
           <div className="subject-header">
             <span>Operating Systems</span>
-            <span>60%</span>
+            <span>{osProgress}%</span>
           </div>
           <div className="progress-bar-bg subject-bg">
-            <div className="progress-bar-fill os-fill" style={{ width: isLoaded ? '60%' : '0%' }}></div>
+            <div className="progress-bar-fill os-fill" style={{ width: isLoaded ? `${osProgress}%` : '0%' }}></div>
           </div>
         </div>
         <div className="subject-item">
           <div className="subject-header">
             <span>DBMS</span>
-            <span>25%</span>
+            <span>{dbmsProgress}%</span>
           </div>
           <div className="progress-bar-bg subject-bg">
-            <div className="progress-bar-fill dbms-fill" style={{ width: isLoaded ? '25%' : '0%' }}></div>
+            <div className="progress-bar-fill dbms-fill" style={{ width: isLoaded ? `${dbmsProgress}%` : '0%' }}></div>
           </div>
         </div>
         <div className="subject-item">
           <div className="subject-header">
             <span>DSA</span>
-            <span>15%</span>
+            <span>{dsaProgress}%</span>
           </div>
           <div className="progress-bar-bg subject-bg">
-            <div className="progress-bar-fill dsa-fill" style={{ width: isLoaded ? '15%' : '0%' }}></div>
+            <div className="progress-bar-fill dsa-fill" style={{ width: isLoaded ? `${dsaProgress}%` : '0%' }}></div>
           </div>
         </div>
       </div>

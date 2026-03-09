@@ -16,6 +16,20 @@ import MotivationalStreak from './components/MotivationalStreak';
 import SettingsModal from './components/SettingsModal';
 import Auth from './components/Auth';
 
+interface Task {
+  id: string;
+  title: string;
+  tag: string;
+  pomodoros: number;
+  completed: boolean;
+}
+
+const initialTasks: Task[] = [
+  { id: '1', title: 'Read OS chapter 1', tag: 'OS', pomodoros: 2, completed: false },
+  { id: '2', title: 'DBMS ER diagram assignment', tag: 'DBMS', pomodoros: 1, completed: false },
+  { id: '3', title: 'Practice DSA problems (arrays)', tag: 'DSA', pomodoros: 3, completed: false }
+];
+
 function App() {
   const { theme, toggleTheme } = useTheme();
   
@@ -23,10 +37,21 @@ function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [focusTime, setFocusTime] = useState(0); 
 
+  // Tasks State
+  const [tasks, setTasks] = useState<Task[]>(() => {
+    const saved = localStorage.getItem('focusflow_tasks');
+    return saved ? JSON.parse(saved) : initialTasks;
+  });
+
   // Auth States
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [demoMode, setDemoMode] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
+
+  // Persistence
+  useEffect(() => {
+    localStorage.setItem('focusflow_tasks', JSON.stringify(tasks));
+  }, [tasks]);
 
   // Authentication Listener
   useEffect(() => {
@@ -133,11 +158,11 @@ function App() {
         <aside className="sidebar-column">
           <PomodoroTimer onSessionComplete={handleSessionComplete} />
           <MotivationalStreak />
-          <ProgressTracker focusTime={focusTime} />
+          <ProgressTracker focusTime={focusTime} tasks={tasks} />
         </aside>
 
         <section className="main-column">
-          <TaskList />
+          <TaskList tasks={tasks} setTasks={setTasks} />
           <QuickNotes />
         </section>
       </main>
