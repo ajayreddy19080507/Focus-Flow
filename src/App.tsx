@@ -15,10 +15,7 @@ import ProgressTracker from './components/ProgressTracker';
 import MotivationalStreak from './components/MotivationalStreak';
 import SettingsModal from './components/SettingsModal';
 import Auth from './components/Auth';
-<<<<<<< HEAD
 import AICompanion from './components/AICompanion';
-=======
->>>>>>> origin/main
 
 interface Task {
   id: string;
@@ -172,10 +169,7 @@ function App() {
       </main>
 
       {isSettingsOpen && <SettingsModal onClose={() => setIsSettingsOpen(false)} />}
-<<<<<<< HEAD
       <AICompanion />
-=======
->>>>>>> origin/main
     </div>
   );
 }
