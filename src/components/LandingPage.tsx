@@ -7,15 +7,15 @@ interface LandingPageProps {
 }
 
 const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
-  // Use the generated hero image
-  const heroImageUrl = "file:///C:/Users/AJAY%20REDDY/.gemini/antigravity/brain/aabef23f-6f63-4b9f-b9c4-1fa2170f4786/focusflow_hero_abstract_1773049981360.png";
+  // Use the image from the public folder
+  const heroImageUrl = "/hero-bg.png";
 
   return (
     <div className="landing-container">
       {/* Hero Section */}
       <section className="hero-section">
         <div className="hero-bg">
-          <img src={heroImageUrl} alt="FocusFlow Hero" />
+          <img src={heroImageUrl} alt="" />
         </div>
         <div className="hero-overlay"></div>
         <div className="hero-content">
