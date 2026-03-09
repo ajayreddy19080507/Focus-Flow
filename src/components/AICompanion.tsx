@@ -36,44 +36,61 @@ const AICompanion: React.FC = () => {
     setInput('');
     setIsLoading(true);
 
+    const tryFetch = async (modelName: string): Promise<boolean> => {
+      try {
+        const response = await fetch('/api-groq/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${GROQ_API_KEY}`
+          },
+          body: JSON.stringify({
+            model: modelName,
+            messages: [
+              {
+                role: 'system',
+                content: "You are 'FocusFlow Study Buddy', a friendly and encouraging productivity coach. Specializing in OS, DBMS, and DSA. Keep responses brief and motivational."
+              },
+              ...messages.filter(m => m.role !== 'system'),
+              userMsg
+            ],
+            temperature: 0.7,
+            max_tokens: 500
+          })
+        });
+
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({}));
+          throw new Error(errData.error?.message || `Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        if (data.choices?.[0]?.message) {
+          setMessages(prev => [...prev, data.choices[0].message]);
+          return true;
+        }
+        return false;
+      } catch (err: any) {
+        if (modelName === MODEL && !err.message.includes('404')) {
+          // If the primary model fails but not with a 404, try the fallback
+          console.warn('Primary model failed, trying fallback...');
+          return tryFetch('llama3-8b-8192');
+        }
+        throw err;
+      }
+    };
+
     try {
-      const response = await fetch('/api-groq/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${GROQ_API_KEY}`
-        },
-        body: JSON.stringify({
-          model: MODEL,
-          messages: [
-            {
-              role: 'system',
-              content: "You are 'FocusFlow Study Buddy', a friendly and encouraging productivity coach for college students. You specialize in Operating Systems (OS), DBMS, and DSA. Keep responses concise, motivational, and helpful. Use student-friendly language."
-            },
-            ...messages.filter(m => m.role !== 'system'),
-            userMsg
-          ],
-          temperature: 0.7,
-          max_tokens: 500
-        })
-      });
-
-      if (!response.ok) {
-        const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.error?.message || `API Error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      if (data.choices && data.choices[0].message) {
-        setMessages(prev => [...prev, data.choices[0].message]);
-      } else {
-        throw new Error('Invalid response format');
-      }
+      await tryFetch(MODEL);
     } catch (error: any) {
       console.error('Groq API Error:', error);
+      let errorMsg = `Connection issue: ${error.message}.`;
+      if (error.message.includes('404')) {
+        errorMsg = "The AI model is currently unavailable or the endpoint is incorrect (404). Switching to a more stable model or checking connection...";
+      }
       setMessages(prev => [...prev, { 
         role: 'assistant', 
-        content: `Connection issue: ${error.message}. Please check if the API key is correct or if there's a CORS restriction.` 
+        content: errorMsg 
       }]);
     } finally {
       setIsLoading(false);
