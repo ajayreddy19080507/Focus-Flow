@@ -16,6 +16,7 @@ import MotivationalStreak from './components/MotivationalStreak';
 import SettingsModal from './components/SettingsModal';
 import Auth from './components/Auth';
 import AICompanion from './components/AICompanion';
+import LandingPage from './components/LandingPage';
 
 interface Task {
   id: string;
@@ -37,7 +38,7 @@ function App() {
   // App States
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [focusTime, setFocusTime] = useState(0); 
-
+  const [showLanding, setShowLanding] = useState(true);
   // Tasks State
   const [tasks, setTasks] = useState<Task[]>(() => {
     const saved = localStorage.getItem('focusflow_tasks');
@@ -108,9 +109,14 @@ function App() {
     return <div className="app-container" style={{display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh'}}><div className="loader">Loading...</div></div>;
   }
 
+  // Render Landing Page
+  if (showLanding && !user && !demoMode) {
+    return <LandingPage onGetStarted={() => setShowLanding(false)} />;
+  }
+
   // Render Auth Screen
   if (!user && !demoMode) {
-    return <Auth onLoginSuccess={handleDemoLogin} />;
+    return <Auth onLoginSuccess={handleDemoLogin} onBackToHome={() => setShowLanding(true)} />;
   }
 
   // Render Dashboard

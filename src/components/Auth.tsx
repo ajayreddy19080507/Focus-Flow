@@ -6,9 +6,10 @@ import './Auth.css';
 
 interface AuthProps {
   onLoginSuccess: () => void;
+  onBackToHome: () => void;
 }
 
-const Auth: React.FC<AuthProps> = ({ onLoginSuccess }) => {
+const Auth: React.FC<AuthProps> = ({ onLoginSuccess, onBackToHome }) => {
   const [isFlipped, setIsFlipped] = useState(false);
   
   // Form States
@@ -71,6 +72,11 @@ const Auth: React.FC<AuthProps> = ({ onLoginSuccess }) => {
 
   return (
     <div className="auth-container">
+      <button className="back-home-btn" onClick={onBackToHome}>
+        <ArrowRight size={16} style={{transform: 'rotate(180deg)'}} /> 
+        Back to Home
+      </button>
+
       <div className="auth-brand">
         <CheckCircle className="brand-icon" size={48} />
         <h1>FocusFlow</h1>
