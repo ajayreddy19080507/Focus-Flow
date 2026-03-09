@@ -1,0 +1,116 @@
+.settings-modal {
+  max-width: 500px;
+  width: 100%;
+  text-align: left;
+}
+
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-6);
+  padding-bottom: var(--spacing-4);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.settings-group {
+  margin-bottom: var(--spacing-6);
+}
+
+.settings-group h3 {
+  font-size: 0.875rem;
+  color: var(--primary-color);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: var(--spacing-3);
+}
+
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-3) 0;
+  border-bottom: 1px dashed var(--border-color);
+}
+
+.setting-item:last-child {
+  border-bottom: none;
+}
+
+.setting-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.setting-label {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-weight: 500;
+  color: var(--text-main);
+}
+
+.setting-desc {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+/* Toggle Switch Styles */
+.toggle-btn {
+  width: 44px;
+  height: 24px;
+  background-color: var(--border-color);
+  border-radius: var(--radius-full);
+  position: relative;
+  transition: background-color var(--transition-fast);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.toggle-knob {
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform var(--transition-fast);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.toggle-btn.active {
+  background-color: var(--primary-color);
+}
+
+.toggle-btn.active .toggle-knob {
+  transform: translateX(20px);
+}
+
+.reset-data-btn {
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  background-color: rgba(239, 68, 68, 0.1);
+  color: var(--danger-color);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.reset-data-btn:hover {
+  background-color: var(--danger-color);
+  color: white;
+}
+
+/* High Contrast Override */
+body.high-contrast {
+  --text-muted: #4B5563;
+  --border-color: #9CA3AF;
+}
+
+[data-theme='dark'] body.high-contrast {
+  --text-muted: #D1D5DB;
+  --border-color: #6B7280;
+  --card-bg: #000000;
+  --bg-color: #111111;
+}
